@@ -4,20 +4,21 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import admin from "../firebase/nodeApp";
+import RecordListContainer from "../widgets/record-list/RecordList.styled";
 
 const Records = ({ data }) => {
   const records: Record<string, any>[] = JSON.parse(data);
   const router = useRouter();
 
   useEffect(() => {
-    if(!data && router.isReady) {
+    if (!data && router.isReady) {
       router.push("/records/create");
       return null;
     }
-  }, [router.isReady])
+  }, [router.isReady]);
 
   return (
-    <div>
+    <RecordListContainer>
       <Row justify="center">
         <Col xs={24} sm={8}>
           <Typography.Title level={1}>Liste des registres</Typography.Title>
@@ -47,8 +48,13 @@ const Records = ({ data }) => {
             )}
           />
         </Col>
+        <style jsx>{`
+        .demo-loadmore-list {
+          background: black;
+        }
+      `}</style>
       </Row>
-    </div>
+      </RecordListContainer>
   );
 };
 

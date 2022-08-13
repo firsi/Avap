@@ -6,6 +6,7 @@ import {
   Input,
   message,
   Row,
+  Select,
   Typography,
 } from "antd";
 import moment, { Moment } from "moment";
@@ -22,6 +23,17 @@ import {
 } from "firebase/firestore";
 import { useRouter } from "next/router";
 import admin from "../../firebase/nodeApp";
+import RecordListContainer from "../../widgets/record-list/RecordList.styled";
+
+const HEALTH_TREATMENT = [
+  {label: "Anti-stress", value: "Anti-stress"},
+  {label: "Vaccin Newcastle", value: "Vaccin Newcastle"},
+  {label: "Vitamines", value: "Vitamines"},
+  {label:  "Hepatoprotecteur", value:  "Hepatoprotecteur"},
+  {label: "Vaccin Gumboro", value: "Vaccin Gumboro"},
+  {label: "Anti-coccidien", value: "Anti-coccidien"},
+  {label:  "Anti-parasitaire", value:  "Anti-parasitaire"},
+];
 
 const AddBatchRow = ({ data }) => {
   const router = useRouter();
@@ -29,7 +41,7 @@ const AddBatchRow = ({ data }) => {
   let batchRef = useRef(data?.batch);
   const record = JSON.parse(data?.record);
   const [age, setAge] = useState<number>();
-  
+
   const handleDateChange = async (value) => {
     // let batch;
     const db = getFirestore();
@@ -40,8 +52,13 @@ const AddBatchRow = ({ data }) => {
     const querySnapshot = await getDocs(q);
     setAge(getNumberOfDays(record?.date));
 
-    if(querySnapshot.empty){
-      form.setFieldsValue({date: value, mortality: null, food: null, health: null});
+    if (querySnapshot.empty) {
+      form.setFieldsValue({
+        date: value,
+        mortality: null,
+        food: null,
+        health: null,
+      });
       batchRef.current = null;
       return;
     }
@@ -49,18 +66,16 @@ const AddBatchRow = ({ data }) => {
     querySnapshot.forEach((doc) => {
       let newBatch = doc.data();
       form.setFieldsValue({ ...newBatch, date: moment(newBatch?.date) });
-      batchRef.current = {...newBatch, id: doc.id};
+      batchRef.current = { ...newBatch, id: doc.id };
     });
-
-    
   };
 
-  const getNumberOfDays = (recordStart) => { 
+  const getNumberOfDays = (recordStart) => {
     const start = moment.unix(recordStart._seconds).startOf("day");
     return form.getFieldValue("date")?.startOf("day").diff(start, "day");
-   }
+  };
 
-   const isWeekBeginning =(date) => getNumberOfDays(date) % 8 === 0
+  const isWeekBeginning = (date) => getNumberOfDays(date) % 8 === 0;
 
   const disabledDate = (current, recordDate) => {
     return (
@@ -79,10 +94,16 @@ const AddBatchRow = ({ data }) => {
     const db = getFirestore();
 
     try {
-      if(!batchRef.current){
+      if (!batchRef.current) {
         await addDoc(collection(db, "record", recordId, "batch"), result);
-      }else {
-        const batchDocRef = doc(db, "record", recordId, "batch", batchRef.current.id);
+      } else {
+        const batchDocRef = doc(
+          db,
+          "record",
+          recordId,
+          "batch",
+          batchRef.current.id
+        );
         await updateDoc(batchDocRef, result);
       }
       message.success("les donnees ont ete enregistres");
@@ -97,42 +118,44 @@ const AddBatchRow = ({ data }) => {
     message.error("Une erreur s'est produite, veuillez reessayer");
   };
 
-  const onSubmit = async () => { 
+  const onSubmit = async () => {
     try {
       await form.validateFields();
       await onFinish(form.getFieldsValue());
       router.push(`/records/${router.query?.record}`);
+    } catch (error) {
+      console.error(error);
     }
-    catch(error){
-      console.error(error)
-    }
-   }
+  };
 
-   const onSubmitAnotherRecord = async () => { 
+  const onSubmitAnotherRecord = async () => {
     try {
       await form.validateFields();
       await onFinish(form.getFieldsValue());
+    } catch (error) {
+      console.error(error);
     }
-    catch(error){
-        console.error(error)
-      }
-    }
-  
+  };
 
   return (
     <Row justify="center">
       <Col xs={24} md={8}>
         <Typography.Title level={1}>Ajouter les données</Typography.Title>
-        <Typography.Text type="secondary">Date d'arrivée: {moment.unix(record?.date._seconds).format("DD-MM-YYYY")}</Typography.Text>
+        <Typography.Text type="secondary">
+          Date d'arrivée:{" "}
+          {moment.unix(record?.date._seconds).format("DD-MM-YYYY")}
+        </Typography.Text>
 
         <Form
           name="dailyForm"
           layout="vertical"
-          initialValues={{...batchRef.current, date: moment(data?.batch?.date) }}
+          initialValues={{
+            ...batchRef.current,
+            date: moment(data?.batch?.date),
+          }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           form={form}
-          
         >
           <Form.Item
             label={`Date(Jour ${age || getNumberOfDays(record?.date)})`}
@@ -161,12 +184,22 @@ const AddBatchRow = ({ data }) => {
             <Input type="number" />
           </Form.Item>
 
-          <Form.Item label="Traitement" name="health" initialValue={batchRef.current?.health || ""}>
-            <Input />
+          <Form.Item
+            label="Traitement"
+            name="health"
+            initialValue={batchRef.current?.health || ""}
+          >
+            <Select options={HEALTH_TREATMENT} />
           </Form.Item>
-          {isWeekBeginning(record?.date) && <Form.Item label="Poids" name="Weigth" initialValue={batchRef.current?.health || ""}>
-            <Input />
-          </Form.Item>}
+          {isWeekBeginning(record?.date) && (
+            <Form.Item
+              label="Poids"
+              name="Weigth"
+              initialValue={batchRef.current?.health || ""}
+            >
+              <Input />
+            </Form.Item>
+          )}
           <Row gutter={8} justify="end">
             <Col>
               <Form.Item>
@@ -204,11 +237,11 @@ export const getServerSideProps = async ({ query }) => {
 
   if (snapshot.empty) {
     console.log("No matching documents.");
-    return { props: { data: { record: JSON.stringify(record), batch: null } } }
+    return { props: { data: { record: JSON.stringify(record), batch: null } } };
   }
 
   snapshot.forEach((doc) => {
-    batch = {id: doc.id, ...doc.data()};
+    batch = { id: doc.id, ...doc.data() };
   });
 
   return { props: { data: { record: JSON.stringify(record), batch } } };
