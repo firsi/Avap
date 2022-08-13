@@ -61,11 +61,11 @@ const Layout = ({ children }: LayoutProps) => {
           Avap
         </Typography.Title>
         <Button
-          type="primary"
+          type="text"
           onClick={showDrawer}
           style={{ marginBottom: 0 }}
         >
-          <Image width={10} height={10} src="/menu-icon.svg" />
+          <Image width={15} height={15} src="/menu-icon.svg" />
         </Button>
         <Drawer placement="right" onClose={onClose} visible={visible}>
           <Menu onClick={handleMenuClick} mode="inline" items={MENU_ITEMS} />
