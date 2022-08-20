@@ -22,7 +22,7 @@ const Records = ({ data }) => {
       <Row justify="center">
         <Col xs={24} sm={8}>
           <Typography.Title level={1}>Liste des registres</Typography.Title>
-          <List
+          {records && <List
             className="demo-loadmore-list"
             itemLayout="horizontal"
             dataSource={records}
@@ -41,18 +41,13 @@ const Records = ({ data }) => {
                 ]}
               >
                 <List.Item.Meta
-                  title={moment(item.date).format("DD MMM YYYY")}
-                  description={`quantité: ${item.quantity}`}
+                  title={moment(item?.date).format("DD MMM YYYY")}
+                  description={`quantité: ${item?.quantity}`}
                 />
               </List.Item>
             )}
-          />
+          />}
         </Col>
-        <style jsx>{`
-        .demo-loadmore-list {
-          background: black;
-        }
-      `}</style>
       </Row>
       </RecordListContainer>
   );

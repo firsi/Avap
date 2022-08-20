@@ -19,10 +19,12 @@ import moment from "moment";
 import Head from "next/head";
 import { useEffect } from "react";
 import { useUser } from "../../context/userContext";
+import {useRouter} from "next/router";
 
 export default function Home() {
   // Our custom hook to get context values
   const { loadingUser, user } = useUser();
+  const router = useRouter();
 
   const profile = { username: "nextjs_user", message: "Awesome!!" };
 
@@ -48,6 +50,7 @@ export default function Home() {
     };
     const db = getFirestore();
     await addDoc(collection(db, "record"), result);
+    router.push(`/`);
     message.success("Super, le registre a été créer avec succes");
   };
 
