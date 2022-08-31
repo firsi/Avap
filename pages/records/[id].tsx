@@ -90,14 +90,35 @@ const Index = () => {
     fetchBatchList();
   }, [router.isReady]);
 
-  const handleRowClick = (record: any) => { 
-    router.push(`/add-batch-row/${router.query?.id}`)
+  const handleRowClick = (record: any) => {
+    router.push(`/add-batch-row/${router.query?.id}`);
+  };
+
+  const getTotalFood = (data: any[]) => {
+    return data?.map(item => parseFloat(item.food))?.reduce(
+      (prev: number, current: number) =>
+        prev + current, 0
+    );
+  };
+
+  const getTotalMortality = (data: any[]) => { 
+    return data?.map(item => parseFloat(item.mortality))?.reduce(
+      (prev: number, current: number) =>
+        prev + current, 0
+    );
    }
+
 
   return (
     <Row justify="center">
       <Col xs={24} md={12}>
-        <Typography.Title level={1}>Registre Journalier</Typography.Title>
+        <Typography.Title level={1} style={{marginBottom: 0}}>Registre Journalier</Typography.Title>
+        <Typography.Text type="secondary" style={{fontSize: 12}}>
+          <strong>Nouriturre total consommée: </strong> {getTotalFood(batchList)}kg
+        </Typography.Text><br />
+        <Typography.Text type="secondary" style={{fontSize: 12, marginBottom: 20, display: "block"}}>
+          <strong>Mortalite:</strong> {getTotalMortality(batchList)}
+        </Typography.Text>
         <Table
           onRow={(record, rowIndex) => {
             return {
@@ -106,7 +127,7 @@ const Index = () => {
           }}
           dataSource={batchList}
           columns={columns}
-          scroll={{x: "max-content"}}
+          scroll={{ x: "max-content" }}
         />
       </Col>
     </Row>
