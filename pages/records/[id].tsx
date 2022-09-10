@@ -51,11 +51,17 @@ const columns: ColumnsType<DataType> = [
     dataIndex: "mortality",
     key: "mortality",
   },
+  {
+    title: "Poids Moyen",
+    dataIndex: "Weigth",
+    key: "Weigth",
+  }
 ];
 
 const Index = () => {
   const router = useRouter();
   const [batchList, setBatchList] = useState<Record<string, any>[]>([]);
+  console.log(batchList)
 
   useEffect(() => {
     const fetchBatchList = async () => {

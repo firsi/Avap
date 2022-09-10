@@ -75,7 +75,7 @@ const AddBatchRow = ({ data }) => {
     return form.getFieldValue("date")?.startOf("day").diff(start, "day");
   };
 
-  const isWeekBeginning = (date) => getNumberOfDays(date) % 8 === 0;
+  const isWeekBeginning = (date) => getNumberOfDays(date) % 7 === 0;
 
   const disabledDate = (current, recordDate) => {
     return (
