@@ -33,6 +33,8 @@ const HEALTH_TREATMENT = [
   {label: "Vaccin Gumboro", value: "Vaccin Gumboro"},
   {label: "Anti-coccidien", value: "Anti-coccidien"},
   {label:  "Anti-parasitaire", value:  "Anti-parasitaire"},
+  {label:  "Aucun", value:  "Aucun"},
+
 ];
 
 const AddBatchRow = ({ data }) => {
