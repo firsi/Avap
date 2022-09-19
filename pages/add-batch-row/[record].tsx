@@ -77,6 +77,11 @@ const AddBatchRow = ({ data }) => {
     return form.getFieldValue("date")?.startOf("day").diff(start, "day");
   };
 
+  const getInitialDay = (recordStart) => { 
+    const start = moment.unix(recordStart._seconds).startOf("day");
+    moment().startOf("day").diff(start, "day");
+  }
+
   const isWeekBeginning = (date) => getNumberOfDays(date) % 7 === 0;
 
   const disabledDate = (current, recordDate) => {
@@ -148,7 +153,7 @@ const AddBatchRow = ({ data }) => {
           {moment.unix(record?.date._seconds).format("DD-MM-YYYY")}
         </Typography.Text>
 
-        <Form
+        {record?.date && <Form
           name="dailyForm"
           layout="vertical"
           initialValues={{
@@ -218,7 +223,7 @@ const AddBatchRow = ({ data }) => {
               </Form.Item>
             </Col>
           </Row>
-        </Form>
+        </Form>}
       </Col>
     </Row>
   );

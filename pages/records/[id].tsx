@@ -52,16 +52,18 @@ const columns: ColumnsType<DataType> = [
     key: "mortality",
   },
   {
-    title: "Poids Moyen",
+    title: "Poids Moyen(g)",
     dataIndex: "Weigth",
     key: "Weigth",
-  }
+  },
 ];
 
 const Index = () => {
   const router = useRouter();
   const [batchList, setBatchList] = useState<Record<string, any>[]>([]);
-  console.log(batchList)
+  const weigths = batchList
+    .filter((item) => item.Weigth)
+    .sort((a, b) => (moment(a.date).isBefore(b.date) ? -1 : 1));
 
   useEffect(() => {
     const fetchBatchList = async () => {
@@ -101,32 +103,79 @@ const Index = () => {
   };
 
   const getTotalFood = (data: any[]) => {
-    return data?.map(item => parseFloat(item.food))?.reduce(
-      (prev: number, current: number) =>
-        prev + current, 0
-    );
+    return data
+      ?.map((item) => parseFloat(item.food))
+      ?.reduce((prev: number, current: number) => prev + current, 0);
   };
 
-  const getTotalMortality = (data: any[]) => { 
-    return data?.map(item => parseFloat(item.mortality))?.reduce(
-      (prev: number, current: number) =>
-        prev + current, 0
-    );
-   }
+  const getTotalMortality = (data: any[]) => {
+    return data
+      ?.map((item) => parseFloat(item.mortality))
+      ?.reduce((prev: number, current: number) => prev + current, 0);
+  };
 
+  const getCurrentMeanWeigth = (data: any[]) => {
+    if (data.length === 0) return "";
+    return data[data.length - 1].Weigth;
+  };
+
+  const getWeigthIncrease = (data: any[]) => {
+    if (data.length === 0) return {kilos: "", percentage: ''};
+    const currentWeigth = parseInt(data[data.length - 1].Weigth);
+    const previousWeigth = parseInt(data[data.length - 2].Weigth);
+    const diff = currentWeigth - previousWeigth;
+    const percentage = ((diff * 100) / currentWeigth).toFixed(2);
+
+    return {kilos: diff, percentage};
+  };
 
   return (
     <Row justify="center">
       <Col xs={24} md={12}>
-        <Typography.Title level={1} style={{marginBottom: 0}}>Registre Journalier</Typography.Title>
-        <Typography.Text type="secondary" style={{fontSize: 12}}>
-          <strong>Nouriturre total consommée: </strong> {getTotalFood(batchList)}kg
-        </Typography.Text><br />
-        <Typography.Text type="secondary" style={{fontSize: 12, marginBottom: 20, display: "block"}}>
-          <strong>Mortalite:</strong> {getTotalMortality(batchList)}
-        </Typography.Text>
+      <Row justify="space-between">
+          <Col>
+            <Typography.Title level={1} style={{ marginBottom: 0 }}>
+              Registre Journalier
+            </Typography.Title>
+          </Col>
+      </Row>
+        <Row justify="space-between">
+          <Col xs={24} md={12}>
+            <Typography.Text type="secondary" style={{ fontSize: 12}}>
+              <strong>Nouriturre total consommée: </strong>{" "}
+              {getTotalFood(batchList)}kg
+            </Typography.Text>
+          </Col>
+          <Col xs={24} flex="none">
+            <Typography.Text
+              type="secondary"
+              style={{ fontSize: 12, display: "block" }}
+            >
+              <strong>Poids Moyen(g):</strong> {getCurrentMeanWeigth(weigths)}g
+            </Typography.Text>
+          </Col>
+        </Row>
+        <Row justify="space-between">
+          <Col xs={{span: 24, order: 2}} md={{span: 12, order: 1}}>
+            <Typography.Text
+              type="secondary"
+              style={{ fontSize: 12, marginBottom: 20, display: "block" }}
+            >
+              <strong>Mortalite:</strong> {getTotalMortality(batchList)}
+            </Typography.Text>
+          </Col>
+          <Col xs={{span: 24, order: 1}} flex="none">
+            <Typography.Text
+              type="secondary"
+              style={{ fontSize: 12, fontWeight: 600, display: "block" }}
+            >
+              +{getWeigthIncrease(weigths)?.kilos}g({getWeigthIncrease(weigths)?.percentage}%)
+            </Typography.Text>
+          </Col>
+        </Row>
+
         <Table
-          onRow={(record, rowIndex) => {
+          onRow={(record) => {
             return {
               onClick: () => handleRowClick(record), // click row
             };
@@ -134,6 +183,7 @@ const Index = () => {
           dataSource={batchList}
           columns={columns}
           scroll={{ x: "max-content" }}
+          pagination={false}
         />
       </Col>
     </Row>
