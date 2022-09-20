@@ -124,7 +124,7 @@ const Index = () => {
     const currentWeigth = parseInt(data[data.length - 1].Weigth);
     const previousWeigth = parseInt(data[data.length - 2].Weigth);
     const diff = currentWeigth - previousWeigth;
-    const percentage = ((diff * 100) / currentWeigth).toFixed(2);
+    const percentage = ((diff * 100) / previousWeigth).toFixed(2);
 
     return {kilos: diff, percentage};
   };
