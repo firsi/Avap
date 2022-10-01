@@ -17,6 +17,10 @@ const MENU_ITEMS = [
       { key: "create-record", label: "Creer un nouveau registre" },
     ],
   },
+  {
+    key: "calculator",
+    label: "Calculateur d'aliments",
+  },
 ];
 
 const Layout = ({ children }: LayoutProps) => {
@@ -40,6 +44,10 @@ const Layout = ({ children }: LayoutProps) => {
       case "create-record":
         router.push("/records/create");
         break;
+
+        case "calculator":
+          router.push("/calculator");
+          break;
 
       default:
         break;
