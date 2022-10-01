@@ -53,8 +53,8 @@ const Records = ({ data }) => {
             <Typography.Title level={5}>Total</Typography.Title>
             <Typography.Text>Galdus: {subjects && galdus}kg</Typography.Text><br />
             <Typography.Text>KBC: {subjects && kbcGrowthFood + kbcFoodStarter}kg</Typography.Text><br />
-            <Typography.Text>Mais: {subjects && cornGrowthFood + cornGrowthFood}kg</Typography.Text><br />
-            <Typography.Text>Total: {subjects && totalGrowthFood + totalFoodStarter}kg</Typography.Text><br />
+            <Typography.Text>Mais: {subjects && cornGrowthFood + cornFoodStarter}kg</Typography.Text><br />
+            <Typography.Text>Total: {subjects && totalGrowthFood + totalFoodStarter + galdus}kg</Typography.Text><br />
           </Card>
         </Col>
       </Row>
