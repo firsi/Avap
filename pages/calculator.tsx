@@ -29,6 +29,7 @@ const Records = ({ data }) => {
           <Card>
           <Form
             name="basic"
+            layout="vertical"
           >
             <Form.Item
               label="Nombre de sujets"
@@ -37,7 +38,7 @@ const Records = ({ data }) => {
                 { required: true, message: "Entrez le nombre de sujet" },
               ]}
             >
-              <InputNumber onChange={(value) => setSubjects(value as number)} />
+              <InputNumber style={{width: 250}} type="number" onChange={(value) => setSubjects(value as number)} />
             </Form.Item>
           </Form>
             <Typography.Title level={5}>0-7 jours</Typography.Title>
