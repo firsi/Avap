@@ -1,16 +1,12 @@
-import { Card, Col, Form, InputNumber, List, Row, Space, Typography } from "antd";
-import moment from "moment";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import admin from "../firebase/nodeApp";
+import { Card, Col, Form, InputNumber, Row, Typography } from "antd";
+import React, {  useState } from "react";
 import RecordListContainer from "../widgets/record-list/RecordList.styled";
 
 const TOTAL_FOOD_PRE_STARTER = 0.125;
 const TOTAL_FOOD_STARTER_PER_SUBJECT = 1;
 const TOTAL_FOOD_GROWTH_PER_SUBJECT = 2;
 
-const Records = ({ data }) => {
+const Calculator = () => {
      const [subjects, setSubjects] = useState<number>(0);
      const galdus =  TOTAL_FOOD_PRE_STARTER * subjects;
      const totalFoodStarter = TOTAL_FOOD_STARTER_PER_SUBJECT * subjects;
@@ -38,7 +34,7 @@ const Records = ({ data }) => {
                 { required: true, message: "Entrez le nombre de sujet" },
               ]}
             >
-              <InputNumber style={{width: 250}} type="number" onChange={(value) => setSubjects(value as number)} />
+              <InputNumber onChange={(value) => setSubjects(value as number)} />
             </Form.Item>
           </Form>
             <Typography.Title level={5}>0-7 jours</Typography.Title>
@@ -63,4 +59,4 @@ const Records = ({ data }) => {
   );
 };
 
-export default Records;
+export default Calculator;
