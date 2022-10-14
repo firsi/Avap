@@ -7,7 +7,9 @@ import admin from "../firebase/nodeApp";
 import RecordListContainer from "../widgets/record-list/RecordList.styled";
 
 const Records = ({ data }) => {
-  const records: Record<string, any>[] = JSON.parse(data);
+  const records: Record<string, any>[] = JSON.parse(data).sort(
+    (a, b) => moment(b.date).unix() - moment(a.date).unix()
+  );
   const router = useRouter();
 
   useEffect(() => {
@@ -22,34 +24,36 @@ const Records = ({ data }) => {
       <Row justify="center">
         <Col xs={24} sm={8}>
           <Typography.Title level={1}>Liste des registres</Typography.Title>
-          {records && <List
-            className="demo-loadmore-list"
-            itemLayout="horizontal"
-            dataSource={records}
-            renderItem={(item) => (
-              <List.Item
-                actions={[
-                  <Link
-                    href={`/add-batch-row/${item?.id}`}
-                    key="list-loadmore-edit"
-                  >
-                    Ajouter des données
-                  </Link>,
-                  <Link href={`/records/${item?.id}`} key="display-records">
-                    Consulter
-                  </Link>,
-                ]}
-              >
-                <List.Item.Meta
-                  title={moment(item?.date).format("DD MMM YYYY")}
-                  description={`quantité: ${item?.quantity}`}
-                />
-              </List.Item>
-            )}
-          />}
+          {records && (
+            <List
+              className="demo-loadmore-list"
+              itemLayout="horizontal"
+              dataSource={records}
+              renderItem={(item) => (
+                <List.Item
+                  actions={[
+                    <Link
+                      href={`/add-batch-row/${item?.id}`}
+                      key="list-loadmore-edit"
+                    >
+                      Ajouter des données
+                    </Link>,
+                    <Link href={`/records/${item?.id}`} key="display-records">
+                      Consulter
+                    </Link>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    title={moment(item?.date).format("DD MMM YYYY")}
+                    description={`quantité: ${item?.quantity}`}
+                  />
+                </List.Item>
+              )}
+            />
+          )}
         </Col>
       </Row>
-      </RecordListContainer>
+    </RecordListContainer>
   );
 };
 
