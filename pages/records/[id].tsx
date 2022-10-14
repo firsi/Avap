@@ -120,7 +120,7 @@ const Index = () => {
   };
 
   const getWeigthIncrease = (data: any[]) => {
-    if (data.length === 0) return {kilos: "", percentage: ''};
+    if (data.length <= 1) return {kilos: "", percentage: ''};
     const currentWeigth = parseInt(data[data.length - 1]?.Weigth);
     const previousWeigth = parseInt(data[data.length - 2]?.Weigth);
     const diff = currentWeigth - previousWeigth;
@@ -128,7 +128,7 @@ const Index = () => {
 
     return {kilos: diff, percentage};
   };
-
+  console.log(weigths);
 
   return (
     <Row justify="center">
@@ -170,7 +170,7 @@ const Index = () => {
               type="secondary"
               style={{ fontSize: 12, fontWeight: 600, display: "block" }}
             >
-              +{!weigths ? 0 : getWeigthIncrease(weigths)?.kilos}g({getWeigthIncrease(weigths)?.percentage}%)
+              +{getWeigthIncrease(weigths)?.kilos}g({getWeigthIncrease(weigths)?.percentage}%)
             </Typography.Text>
           </Col>
         </Row>
