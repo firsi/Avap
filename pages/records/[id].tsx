@@ -128,7 +128,6 @@ const Index = () => {
 
     return {kilos: diff, percentage};
   };
-  console.log(weigths);
 
   return (
     <Row justify="center">

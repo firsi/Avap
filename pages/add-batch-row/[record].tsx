@@ -74,7 +74,8 @@ const AddBatchRow = ({ data }) => {
 
   const getNumberOfDays = (recordStart) => {
     const start = moment.unix(recordStart._seconds).startOf("day");
-    return form.getFieldValue("date")?.startOf("day").diff(start, "day");
+    const currentDate = form.getFieldValue("date") || moment();
+    return currentDate?.startOf("day").diff(start, "day");
   };
 
   const getInitialDay = (recordStart) => { 
@@ -143,6 +144,7 @@ const AddBatchRow = ({ data }) => {
       console.error(error);
     }
   };
+
 
   return (
     <Row justify="center">
