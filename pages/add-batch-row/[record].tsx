@@ -75,7 +75,7 @@ const AddBatchRow = ({ data }) => {
   const getNumberOfDays = (recordStart) => {
     const start = moment.unix(recordStart._seconds).startOf("day");
     const currentDate = form.getFieldValue("date") || moment();
-    return currentDate?.startOf("day").diff(start, "day");
+    return currentDate?.startOf("day").diff(start, "day") + 1;
   };
 
   const getInitialDay = (recordStart) => { 
