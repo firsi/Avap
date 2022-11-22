@@ -64,6 +64,7 @@ const Layout = ({ children }: LayoutProps) => {
           justifyContent: "space-between",
           alignItems: "center",
           padding: "0 15px",
+          background:"#164587"
         }}
       >
         <Link href="/" passHref>

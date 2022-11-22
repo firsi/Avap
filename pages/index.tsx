@@ -1,4 +1,4 @@
-import { Col, List, Row, Typography } from "antd";
+import { Col, List, Row, Typography, Divider } from "antd";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -23,7 +23,10 @@ const Records = ({ data }) => {
     <RecordListContainer>
       <Row justify="center">
         <Col xs={24} sm={8}>
-          <Typography.Title level={1}>Liste des registres</Typography.Title>
+          <Divider orientation="left" orientationMargin={0}>
+          <Typography.Title level={4} style={{color: "#164587"}}>Mes Bandes</Typography.Title>
+          </Divider>
+         
           {records && (
             <List
               className="demo-loadmore-list"

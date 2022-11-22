@@ -12,6 +12,7 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Summary from "../../components/summary/Summary";
+import DailyDataSummaryWrapper from "./DailyDataSummary.styled"
 
 interface DataType {
   key: React.Key;
@@ -133,7 +134,7 @@ const DailyDataSummary = () => {
   };
 
   return (
-    <>
+    <DailyDataSummaryWrapper>
     <Row justify="center" style={{marginBottom: 16}}>
       <Col xs={24} md={12}>
         <Row gutter={[8, 8]}>
@@ -181,7 +182,7 @@ const DailyDataSummary = () => {
         />
       </Col>
     </Row>
-        </>
+        </DailyDataSummaryWrapper>
     
   );
 };
