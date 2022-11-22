@@ -24,7 +24,7 @@ const Records = ({ data }) => {
       <Row justify="center">
         <Col xs={24} sm={8}>
           <Divider orientation="left" orientationMargin={0}>
-          <Typography.Title level={4} style={{color: "#164587"}}>Mes Bandes</Typography.Title>
+          <Typography.Title level={5} style={{color: "#164587"}}>Mes Bandes</Typography.Title>
           </Divider>
          
           {records && (
