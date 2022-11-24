@@ -9,7 +9,7 @@ import {
   Select,
   Typography,
 } from "antd";
-import moment, { Moment } from "moment";
+// import moment, { Moment } from "moment";
 import React, { useRef, useState } from "react";
 import {
   addDoc,
@@ -22,6 +22,7 @@ import {
   where,
 } from "firebase/firestore";
 import { useRouter } from "next/router";
+import dayjs from "dayjs";
 import admin from "../../firebase/nodeApp";
 import RecordListContainer from "../../widgets/record-list/RecordList.styled";
 
@@ -60,6 +61,7 @@ const AddBatchRow = ({ data }) => {
         mortality: null,
         food: null,
         health: null,
+        water: null
       });
       batchRef.current = null;
       return;
@@ -67,29 +69,32 @@ const AddBatchRow = ({ data }) => {
 
     querySnapshot.forEach((doc) => {
       let newBatch = doc.data();
-      form.setFieldsValue({ ...newBatch, date: moment(newBatch?.date) });
+      form.setFieldsValue({ ...newBatch, date: dayjs(newBatch?.date) });
       batchRef.current = { ...newBatch, id: doc.id };
     });
   };
 
   const getNumberOfDays = (recordStart) => {
-    const start = moment.unix(recordStart._seconds).startOf("day");
-    const currentDate = form.getFieldValue("date") || moment();
+    const start = dayjs.unix(recordStart._seconds).startOf("day");
+    const currentDate = form.getFieldValue("date") || dayjs();
     return currentDate?.startOf("day").diff(start, "day") + 1;
   };
 
   const getInitialDay = (recordStart) => { 
-    const start = moment.unix(recordStart._seconds).startOf("day");
-    moment().startOf("day").diff(start, "day");
+    const start = dayjs.unix(recordStart._seconds).startOf("day");
+    dayjs().startOf("day").diff(start, "day");
   }
 
-  const isWeekBeginning = (date) => getNumberOfDays(date) % 7 === 0;
+  const isWeekBeginning = (date) => {
+    const numberOfDays = getNumberOfDays(date);
+    return numberOfDays === 1 ? true : numberOfDays % 7 === 0};
 
   const disabledDate = (current, recordDate) => {
+    console.log(recordDate);
     return (
       current &&
-      (current < moment.unix(recordDate._seconds).startOf("day") ||
-        current > moment().endOf("day"))
+      (current < dayjs.unix(recordDate._seconds).startOf("day") ||
+        current > dayjs().endOf("day"))
     );
   };
 
@@ -97,7 +102,7 @@ const AddBatchRow = ({ data }) => {
     const recordId = router.query?.record as string;
     const result = {
       ...values,
-      date: moment(values.date).format("YYYY-MM-DD"),
+      date: dayjs(values.date).format("YYYY-MM-DD"),
     };
     const db = getFirestore();
 
@@ -152,7 +157,7 @@ const AddBatchRow = ({ data }) => {
         <Typography.Title level={1}>Ajouter les données</Typography.Title>
         <Typography.Text type="secondary">
           Date d'arrivée:{" "}
-          {moment.unix(record?.date._seconds).format("DD-MM-YYYY")}
+          {dayjs.unix(record?.date._seconds).format("DD-MM-YYYY")}
         </Typography.Text>
 
         {record?.date && <Form
@@ -160,7 +165,7 @@ const AddBatchRow = ({ data }) => {
           layout="vertical"
           initialValues={{
             ...batchRef.current,
-            date: moment(data?.batch?.date),
+            date: dayjs(data?.batch?.date),
           }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
@@ -170,7 +175,6 @@ const AddBatchRow = ({ data }) => {
             label={`Date(Jour ${age || getNumberOfDays(record?.date)})`}
             name="date"
             rules={[{ required: true, message: "Choisissez une date" }]}
-            // initialValue={moment()}
           >
             <DatePicker
               onChange={handleDateChange}
@@ -194,6 +198,19 @@ const AddBatchRow = ({ data }) => {
           </Form.Item>
 
           <Form.Item
+            label="Consommation d'eau(litre)"
+            name="water"
+            rules={[
+              {
+                required: true,
+                message: "Entrez la quantite d'eau consommé aujourd'hui",
+              },
+            ]}
+          >
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item
             label="Traitement"
             name="health"
             initialValue={batchRef.current?.health || ""}
@@ -204,7 +221,7 @@ const AddBatchRow = ({ data }) => {
             <Form.Item
               label="Poids"
               name="Weigth"
-              initialValue={batchRef.current?.health || ""}
+              initialValue={batchRef.current?.Weigth || ""}
             >
               <Input />
             </Form.Item>
@@ -241,7 +258,7 @@ export const getServerSideProps = async ({ query }) => {
 
   const batchRef = db.collection(`record/${query?.record}/batch`);
   const snapshot = await batchRef
-    .where("date", "==", moment().format("YYYY-MM-DD"))
+    .where("date", "==", dayjs().format("YYYY-MM-DD"))
     .get();
 
   if (snapshot.empty) {

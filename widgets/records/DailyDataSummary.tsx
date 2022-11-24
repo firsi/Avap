@@ -44,6 +44,11 @@ const columns: ColumnsType<DataType> = [
     key: "food",
   },
   {
+    title: "Eau(litre)",
+    dataIndex: "water",
+    key: "water",
+  },
+  {
     title: "Traitements",
     dataIndex: "health",
     key: "health",
@@ -136,7 +141,7 @@ const DailyDataSummary = () => {
   return (
     <DailyDataSummaryWrapper>
     <Row justify="center" style={{marginBottom: 16}}>
-      <Col xs={24} md={12}>
+      <Col xs={24} md={14}>
         <Row gutter={[8, 8]}>
           <Col  xs={12}>
             <Summary
@@ -168,7 +173,7 @@ const DailyDataSummary = () => {
         </Col>
     </Row>
     <Row justify="center">
-      <Col xs={24} md={12}>
+      <Col xs={24} md={14}>
       <Table
           onRow={(record) => {
             return {
