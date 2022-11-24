@@ -24,7 +24,7 @@ import {
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import admin from "../../firebase/nodeApp";
-import RecordListContainer from "../../widgets/record-list/RecordList.styled";
+import AddRecordContainer from "../../widgets/add-record/addRecord.style";
 
 const HEALTH_TREATMENT = [
   {label: "Anti-stress", value: "Anti-stress"},
@@ -152,14 +152,10 @@ const AddBatchRow = ({ data }) => {
 
 
   return (
-    <Row justify="center">
+    <AddRecordContainer>
+      <Row justify="center">
       <Col xs={24} md={8}>
-        <Typography.Title level={1}>Ajouter les données</Typography.Title>
-        <Typography.Text type="secondary">
-          Date d'arrivée:{" "}
-          {dayjs.unix(record?.date._seconds).format("DD-MM-YYYY")}
-        </Typography.Text>
-
+        <Typography.Title level={4}>Ajouter vos données</Typography.Title>
         {record?.date && <Form
           name="dailyForm"
           layout="vertical"
@@ -245,6 +241,7 @@ const AddBatchRow = ({ data }) => {
         </Form>}
       </Col>
     </Row>
+    </AddRecordContainer>
   );
 };
 
