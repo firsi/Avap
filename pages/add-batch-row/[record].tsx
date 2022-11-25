@@ -44,6 +44,7 @@ const AddBatchRow = ({ data }) => {
   let batchRef = useRef(data?.batch);
   const record = JSON.parse(data?.record);
   const [age, setAge] = useState<number>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleDateChange = async (value) => {
     // let batch;
@@ -105,6 +106,7 @@ const AddBatchRow = ({ data }) => {
       date: dayjs(values.date).format("YYYY-MM-DD"),
     };
     const db = getFirestore();
+    setLoading(true);
 
     try {
       if (!batchRef.current) {
@@ -120,9 +122,11 @@ const AddBatchRow = ({ data }) => {
         await updateDoc(batchDocRef, result);
       }
       message.success("les donnees ont ete enregistres");
+      setLoading(false);
     } catch (error) {
       message.error("Une erreur s'est produite, veuillez reessayer");
       console.error(error);
+      setLoading(false);
     }
   };
 
@@ -225,14 +229,14 @@ const AddBatchRow = ({ data }) => {
           <Row gutter={8} justify="end">
             <Col>
               <Form.Item>
-                <Button type="primary" onClick={onSubmitAnotherRecord}>
+                <Button loading={loading} onClick={onSubmitAnotherRecord}>
                   Ajouter un autre
                 </Button>
               </Form.Item>
             </Col>
             <Col>
               <Form.Item>
-                <Button type="primary" onClick={onSubmit}>
+                <Button loading={loading} type="primary" onClick={onSubmit}>
                   Terminé
                 </Button>
               </Form.Item>

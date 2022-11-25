@@ -4,7 +4,7 @@ const RecordListContainer = styled.div`
 .ant-list-item {
     background: #c2e3f3;
     border-radius: 5px;
-    padding-left: 8px;
+    padding: 8px;
     margin-bottom: 8px;
 
     .ant-list-item-action > li > a {
@@ -18,6 +18,14 @@ const RecordListContainer = styled.div`
 
     .ant-list-item-meta-title, .ant-list-item-meta-description {
         color: #d4d4d4;
+    }
+
+    .ant-list-item-meta .ant-list-item-meta-description {
+        font-size: 12px;
+    }
+    .ant-list-item-action>li {
+        font-size: 12px;
+     
     }
 }
 `;

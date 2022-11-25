@@ -1,15 +1,19 @@
-import { Col, List, Row, Typography, Divider } from "antd";
+import { Col, List, Row, Typography, Divider, Button, Popconfirm } from "antd";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import admin from "../firebase/nodeApp";
+import {DeleteOutlined} from "@ant-design/icons"
+import { doc, deleteDoc, getFirestore } from "firebase/firestore";
 import RecordListContainer from "../widgets/record-list/RecordList.styled";
 
 const Records = ({ data }) => {
-  const records: Record<string, any>[] = JSON.parse(data).sort(
+  const parsedRecords: Record<string, any>[] = JSON.parse(data).sort(
     (a, b) => moment(b.date).unix() - moment(a.date).unix()
   );
+    const [records, setRecords] = useState<any[]>(parsedRecords);
+  
   const router = useRouter();
 
   useEffect(() => {
@@ -18,6 +22,20 @@ const Records = ({ data }) => {
       return null;
     }
   }, [router.isReady]);
+
+  const confirm = async (id: any) => {
+    const db = getFirestore();
+    try {
+      await deleteDoc(doc(db, "record", id));
+      setRecords(state => state.filter(item => item.id !== id));
+    }
+    catch(error){
+      console.log(error)
+    }
+  };
+  
+  const cancel = (e: React.MouseEvent<HTMLElement>) => {
+  };
 
   return (
     <RecordListContainer>
@@ -44,6 +62,16 @@ const Records = ({ data }) => {
                     <Link href={`/records/${item?.id}`} key="display-records">
                       Consulter
                     </Link>,
+                     <Popconfirm
+                     title="Voulez-vous vraiment supprimer cette bande"
+                     onConfirm={() => confirm(item?.id)}
+                     onCancel={cancel}
+                     okText="Oui"
+                     cancelText="Annuler"
+                   >
+                     <Button type="text" danger icon={<DeleteOutlined />} />
+                   </Popconfirm>
+                    
                   ]}
                 >
                   <List.Item.Meta

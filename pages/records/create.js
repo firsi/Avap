@@ -15,38 +15,40 @@ import {
   addDoc,
   collection,
 } from "firebase/firestore";
-import moment from "moment";
+import dayjs from "dayjs";
 import Head from "next/head";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "../../context/userContext";
 import {useRouter} from "next/router";
 
 export default function Home() {
   // Our custom hook to get context values
-  const { loadingUser, user } = useUser();
+  // const { loadingUser, user } = useUser();
+  const [loading, setLoading] = useState(false)
   const router = useRouter();
 
-  const profile = { username: "nextjs_user", message: "Awesome!!" };
+  // const profile = { username: "nextjs_user", message: "Awesome!!" };
 
-  useEffect(() => {
-    if (!loadingUser) {
-      // You know that the user is loaded: either logged in or out!
-      console.log(user);
-    }
-    // You also have your firebase app initialized
-  }, [loadingUser, user]);
+  // useEffect(() => {
+  //   if (!loadingUser) {
+  //     // You know that the user is loaded: either logged in or out!
+  //     console.log(user);
+  //   }
+  //   // You also have your firebase app initialized
+  // }, [loadingUser, user]);
 
-  const createUser = async () => {
-    const db = getFirestore();
-    await setDoc(doc(db, "profile", profile.username), profile);
+  // const createUser = async () => {
+  //   const db = getFirestore();
+  //   await setDoc(doc(db, "profile", profile.username), profile);
 
-    alert("User created!!");
-  };
+  //   alert("User created!!");
+  // };
 
   const onFinish = async (values) => {
+    setLoading(true)
     const result = {
       quantity: parseInt(values.quantity),
-      date: moment(values.date).toDate(),
+      date: dayjs(values.date).toDate(),
     };
     const db = getFirestore();
     await addDoc(collection(db, "record"), result);
@@ -56,6 +58,7 @@ export default function Home() {
 
   const onFinishFailed = (error) => {
     console.log(error);
+    setLoading(false);
     message.error("Une erreur s'est produite, Re-essayez encore");
   };
 
@@ -104,7 +107,7 @@ export default function Home() {
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" loading={loading} htmlType="submit">
                 Créer le registre
               </Button>
             </Form.Item>

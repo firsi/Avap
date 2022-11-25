@@ -65,47 +65,15 @@ const columns: ColumnsType<DataType> = [
   },
 ];
 
-const DailyDataSummary = () => {
+type DailyDataSummaryProps = {
+  data: any[]
+}
+
+const DailyDataSummary = ({data=[]}: DailyDataSummaryProps) => {
   const router = useRouter();
-  const [batchList, setBatchList] = useState<Record<string, any>[]>([]);
-  const weigths = batchList
-    .filter((item) => item.Weigth)
+  const weigths = data
+    ?.filter((item) => item.Weigth)
     .sort((a, b) => (moment(a.date).isBefore(b.date) ? -1 : 1));
-
-  useEffect(() => {
-    const fetchBatchList = async () => {
-      if (!router.isReady) return;
-      const data = [];
-      const db = getFirestore();
-      const record = await fetchRecord();
-      const q = query(collection(db, `record/${router.query?.id}/batch`));
-      const querySnapshot = await getDocs(q);
-
-      querySnapshot.forEach((doc) => {
-        data.push(doc.data());
-      });
-      const batchData = data.map((item) => ({
-        ...item,
-        age:
-          moment(item.date, "YYYY-MM-DD")
-            .startOf("day")
-            .diff(moment.unix(record?.date?.seconds).startOf("day"), "days") +
-          1,
-      }));
-      setBatchList(batchData);
-    };
-
-    const fetchRecord = async () => {
-      if (!router.isReady) return;
-      const db = getFirestore();
-      const q = doc(db, "record", `${router.query.id}`);
-      const docSnapshot = await getDoc(q);
-
-      return docSnapshot.data();
-    };
-
-    fetchBatchList();
-  }, [router.isReady]);
 
   const handleRowClick = (record: any) => {
     router.push(`/add-batch-row/${router.query?.id}`);
@@ -123,8 +91,8 @@ const DailyDataSummary = () => {
       ?.reduce((prev: number, current: number) => prev + current, 0);
   };
 
-  const getCurrentMeanWeigth = (data: any[]) => {
-    if (data.length === 0) return "";
+  const getCurrentMeanWeigth = (data: any[]=[]) => {
+    if (data?.length === 0) return "";
     return data[data.length - 1].Weigth;
   };
 
@@ -146,7 +114,7 @@ const DailyDataSummary = () => {
           <Col  xs={12}>
             <Summary
               label="Aliments(kg) consommee"
-              description={`${getTotalFood(batchList)}kg `}
+              description={`${getTotalFood(data)}kg `}
             />
           </Col>
           <Col  xs={12}>
@@ -158,7 +126,7 @@ const DailyDataSummary = () => {
           <Col xs={12}>
             <Summary
               label="Mortalite"
-              description={`${getTotalMortality(batchList)} `}
+              description={`${getTotalMortality(data)} `}
             />
           </Col>
           <Col xs={12}>
@@ -180,7 +148,7 @@ const DailyDataSummary = () => {
               onClick: () => handleRowClick(record), // click row
             };
           }}
-          dataSource={batchList}
+          dataSource={data}
           columns={columns}
           scroll={{ x: "max-content" }}
           pagination={false}
