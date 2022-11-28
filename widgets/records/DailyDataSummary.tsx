@@ -11,8 +11,9 @@ import {
 import moment from "moment";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import numbro from "numbro";
 import Summary from "../../components/summary/Summary";
-import DailyDataSummaryWrapper from "./DailyDataSummary.styled"
+import DailyDataSummaryWrapper from "./DailyDataSummary.styled";
 
 interface DataType {
   key: React.Key;
@@ -66,11 +67,38 @@ const columns: ColumnsType<DataType> = [
 ];
 
 type DailyDataSummaryProps = {
-  data: any[]
-}
+  data: any[];
+};
 
-const DailyDataSummary = ({data=[]}: DailyDataSummaryProps) => {
+const getTotalMortality = (data: any[], total?: number) => {
+  let mortalityInPercent = "_";
+  const mortality = data
+    ?.map((item) => parseFloat(item.mortality))
+    ?.reduce((prev: number, current: number) => prev + current, 0);
+
+    if(total){
+      const mortalityInPercent = (mortality * 100)/total;
+      return {mortality, mortalityInPercent: numbro(mortalityInPercent).format({average: true, mantissa: 1})};
+    }
+
+    return {mortality, mortalityInPercent}
+    
+};
+
+const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
   const router = useRouter();
+  const [quantity, setQuantity] = useState<number>();
+  const {mortality, mortalityInPercent} = getTotalMortality(data, quantity);
+
+  useEffect(() => {
+    if(!router.query?.id) return;
+    const db = getFirestore();
+    const docRef = doc(db, "record", router.query.id);
+    getDoc(docRef).then((docSnap) => {
+      docSnap.exists() && setQuantity(docSnap.data().quantity);
+    });
+  }, [router.query.id]);
+
   const weigths = data
     ?.filter((item) => item.Weigth)
     .sort((a, b) => (moment(a.date).isBefore(b.date) ? -1 : 1));
@@ -85,13 +113,9 @@ const DailyDataSummary = ({data=[]}: DailyDataSummaryProps) => {
       ?.reduce((prev: number, current: number) => prev + current, 0);
   };
 
-  const getTotalMortality = (data: any[]) => {
-    return data
-      ?.map((item) => parseFloat(item.mortality))
-      ?.reduce((prev: number, current: number) => prev + current, 0);
-  };
+  
 
-  const getCurrentMeanWeigth = (data: any[]=[]) => {
+  const getCurrentMeanWeigth = (data: any[] = []) => {
     if (data?.length === 0) return "";
     return data[data.length - 1].Weigth;
   };
@@ -108,55 +132,54 @@ const DailyDataSummary = ({data=[]}: DailyDataSummaryProps) => {
 
   return (
     <DailyDataSummaryWrapper>
-    <Row justify="center" style={{marginBottom: 16}}>
-      <Col xs={24} md={14}>
-        <Row gutter={[8, 8]}>
-          <Col  xs={12}>
-            <Summary
-              label="Aliments(kg) consommee"
-              description={`${getTotalFood(data)}kg `}
-            />
-          </Col>
-          <Col  xs={12}>
-            <Summary
-              label="Poids Moyen(g)"
-              description={`${getCurrentMeanWeigth(weigths)}g `}
-            />
-          </Col>
-          <Col xs={12}>
-            <Summary
-              label="Mortalite"
-              description={`${getTotalMortality(data)} `}
-            />
-          </Col>
-          <Col xs={12}>
-            <Summary
-              label="Prise de poids Moyen"
-              description={`+${getWeigthIncrease(weigths)?.kilos}g(${
-                getWeigthIncrease(weigths)?.percentage
-              }%) `}
-            />
-          </Col>
-        </Row>
+      <Row justify="center" style={{ marginBottom: 16 }}>
+        <Col xs={24} md={14}>
+          <Row gutter={[8, 8]}>
+            <Col xs={12}>
+              <Summary
+                label="Aliments consommées(kg)"
+                description={`${getTotalFood(data)}kg `}
+              />
+            </Col>
+            <Col xs={12}>
+              <Summary
+                label="Poids Moyen(g)"
+                description={`${getCurrentMeanWeigth(weigths)}g `}
+              />
+            </Col>
+            <Col xs={12}>
+              <Summary
+                label="Mortalité"
+                description={`${mortality}(${mortalityInPercent}%)`}
+              />
+            </Col>
+            <Col xs={12}>
+              <Summary
+                label="Prise de poids Moyen"
+                description={`+${getWeigthIncrease(weigths)?.kilos}g(${
+                  getWeigthIncrease(weigths)?.percentage
+                }%) `}
+              />
+            </Col>
+          </Row>
         </Col>
-    </Row>
-    <Row justify="center">
-      <Col xs={24} md={14}>
-      <Table
-          onRow={(record) => {
-            return {
-              onClick: () => handleRowClick(record), // click row
-            };
-          }}
-          dataSource={data}
-          columns={columns}
-          scroll={{ x: "max-content" }}
-          pagination={false}
-        />
-      </Col>
-    </Row>
-        </DailyDataSummaryWrapper>
-    
+      </Row>
+      <Row justify="center">
+        <Col xs={24} md={14}>
+          <Table
+            onRow={(record) => {
+              return {
+                onClick: () => handleRowClick(record), // click row
+              };
+            }}
+            dataSource={data}
+            columns={columns}
+            scroll={{ x: "max-content" }}
+            pagination={false}
+          />
+        </Col>
+      </Row>
+    </DailyDataSummaryWrapper>
   );
 };
 
