@@ -93,7 +93,7 @@ const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
   useEffect(() => {
     if(!router.query?.id) return;
     const db = getFirestore() as any;
-    const docRef = doc(db, "records", router.query.id);
+    const docRef = doc(db, "records", router.query.id as string);
     getDoc(docRef).then((docSnap) => {
       docSnap.exists() && setQuantity(docSnap.data().quantity);
     });
