@@ -19,8 +19,11 @@ const useBatchList = (recordId?: string) => {
             querySnapshot.forEach((doc) => {
                 data.push(doc.data());
             });
-            const batchData = data.map((item) => ({
+            const batchData = data.map((item, index) => ({
                 ...item,
+                key: moment(item.date, "YYYY-MM-DD")
+                .startOf("day")
+                .diff(moment.unix(record?.date?.seconds).startOf("day"), "days") + 1,
                 age: moment(item.date, "YYYY-MM-DD")
                     .startOf("day")
                     .diff(moment.unix(record?.date?.seconds).startOf("day"), "days") + 1,

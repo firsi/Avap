@@ -1,5 +1,8 @@
-import { Col, Row, Table, Typography, Card } from "antd";
+import { Col, Row, Table, Typography, Card, FloatButton } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import {
+  PlusOutlined
+} from '@ant-design/icons';
 import {
   collection,
   doc,
@@ -85,10 +88,12 @@ const getTotalMortality = (data: any[], total?: number) => {
     
 };
 
-const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
+const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => { 
   const router = useRouter();
   const [quantity, setQuantity] = useState<number>();
-  const {mortality, mortalityInPercent} = getTotalMortality(data, quantity);
+  const [currentAge, setCurrentAge] = useState<number>(data.length - 1);
+  const slicedData = data.slice(0, currentAge);
+  const {mortality, mortalityInPercent} = getTotalMortality(slicedData, quantity);
 
   useEffect(() => {
     if(!router.query?.id) return;
@@ -99,11 +104,15 @@ const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
     });
   }, [router.query.id]);
 
-  const weigths = data
+  const weigths = slicedData
     ?.filter((item) => item.Weigth)
     .sort((a, b) => (moment(a.date).isBefore(b.date) ? -1 : 1));
 
-  const handleRowClick = (record: any) => {
+  const handleRowClick = (index: number) => {
+    setCurrentAge(index);
+  };
+
+  const addNewRecord = () => {
     router.push(`/add-batch-row/${router.query?.id}`);
   };
 
@@ -138,7 +147,7 @@ const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
             <Col xs={12}>
               <Summary
                 label="Aliments consommées(kg)"
-                description={`${getTotalFood(data)}kg `}
+                description={`${getTotalFood(slicedData)}kg `}
               />
             </Col>
             <Col xs={12}>
@@ -167,9 +176,16 @@ const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
       <Row justify="center">
         <Col xs={24} md={14}>
           <Table
-            onRow={(record) => {
+           rowSelection={{
+            type: "radio",
+            onChange: (selectedRowKeys: React.Key, selectedRows: DataType[]) => {
+              console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+              handleRowClick(parseInt(selectedRows[0].age, 10))
+            },
+          }}
+            onRow={(record, index) => {
               return {
-                onClick: () => handleRowClick(record), // click row
+                // onClick: () => handleRowClick(record, index), // click row
               };
             }}
             dataSource={data}
@@ -179,6 +195,7 @@ const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
           />
         </Col>
       </Row>
+      <FloatButton icon={<PlusOutlined />} type="primary" onClick={addNewRecord} />
     </DailyDataSummaryWrapper>
   );
 };

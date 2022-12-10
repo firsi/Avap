@@ -71,7 +71,6 @@ const Records = ({ data }) => {
                    >
                      <Button type="text" danger icon={<DeleteOutlined />} />
                    </Popconfirm>
-                    
                   ]}
                 >
                   <List.Item.Meta
