@@ -178,8 +178,8 @@ const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
           <Table
            rowSelection={{
             type: "radio",
-            onChange: (selectedRowKeys: React.Key, selectedRows: DataType[]) => {
-              console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+              // console.log(selectedRowKeys);
               handleRowClick(parseInt(selectedRows[0].age, 10))
             },
           }}
