@@ -174,6 +174,7 @@ interface DataType {
   food: string;
   health: string;
   mortality: string;
+  Weigth: string;
 }
 
 const columns: ColumnsType<DataType> = [
