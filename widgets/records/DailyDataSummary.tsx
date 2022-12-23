@@ -1,4 +1,4 @@
-import { Col, Row, Table, Typography, Card, FloatButton } from "antd";
+import { Col, Row, Table, Space, Typography, Card, FloatButton } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import {
   PlusOutlined
@@ -16,58 +16,11 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import numbro from "numbro";
 import Summary from "../../components/summary/Summary";
-import DailyDataSummaryWrapper from "./DailyDataSummary.styled";
-
-interface DataType {
-  key: React.Key;
-  age: string;
-  date: number;
-  food: string;
-  health: string;
-  mortality: string;
-}
-
-const columns: ColumnsType<DataType> = [
-  {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
-    title: "Date",
-    dataIndex: "date",
-    key: "date",
-    defaultSortOrder: "descend",
-    sortDirections: ["ascend", "descend", "ascend"],
-    sorter: (a, b) =>
-      moment(b.date, "YYYY-MM-DD").unix() - moment(a.date, "YYYY-MM-DD").unix(),
-  },
-  {
-    title: "Alimentation(kg)",
-    dataIndex: "food",
-    key: "food",
-  },
-  {
-    title: "Eau(litre)",
-    dataIndex: "water",
-    key: "water",
-  },
-  {
-    title: "Traitements",
-    dataIndex: "health",
-    key: "health",
-  },
-  {
-    title: "Mortalité",
-    dataIndex: "mortality",
-    key: "mortality",
-  },
-  {
-    title: "Poids Moyen(g)",
-    dataIndex: "Weigth",
-    key: "Weigth",
-  },
-];
+import dayjs from "dayjs";
+import {DailyDataSummary as DailyDataSummaryWrapper, Detail} from "./DailyDataSummary.styled";
+import SkullCrossbones from "../../icons/skull-crossbones.svg";
+import WeightScale from "../../icons/weight-scale.svg";
+import Syringe from "../../icons/syringe.svg";
 
 type DailyDataSummaryProps = {
   data: any[];
@@ -188,9 +141,21 @@ const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
                 // onClick: () => handleRowClick(record, index), // click row
               };
             }}
+            expandable={{
+              expandedRowRender: (record) => <>
+                <Detail label="Date" value={dayjs(record.date).format("DD MMM YYYY")} />
+                <Detail label="Traitements" value={record.health} />
+                <Detail label="Mortalite" value={record.mortality} />
+                {record.Weigth && <Detail label="Poids" value={`${record.Weigth}g`} />}
+              </>,
+              indentSize: 25,
+              // rowExpandable: (record) => record.name !== 'Not Expandable',
+              expandRowByClick: true,
+              fixed: false
+            }}
             dataSource={data}
             columns={columns}
-            scroll={{ x: "max-content" }}
+            scroll={{ x: "max-content", y: 340 }}
             pagination={false}
           />
         </Col>
@@ -201,3 +166,65 @@ const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
 };
 
 export default DailyDataSummary;
+
+interface DataType {
+  key: React.Key;
+  age: string;
+  date: number;
+  food: string;
+  health: string;
+  mortality: string;
+}
+
+const columns: ColumnsType<DataType> = [
+  {
+    title: "Age",
+    dataIndex: "age",
+    key: "age",
+  },
+  // {
+  //   title: "Date",
+  //   dataIndex: "date",
+  //   key: "date",
+  //   defaultSortOrder: "descend",
+  //   sortDirections: ["ascend", "descend", "ascend"],
+  //   sorter: (a, b) =>
+  //     moment(b.date, "YYYY-MM-DD").unix() - moment(a.date, "YYYY-MM-DD").unix(),
+  // },
+  {
+    title: "Prov.(kg)",
+    dataIndex: "food",
+    key: "food",
+  },
+  {
+    title: "Eau(l)",
+    dataIndex: "water",
+    key: "water",
+  },
+  {
+    title: "",
+    dataIndex: "water",
+    key: "icons",
+    render: (text, record) => <Space size={4}>
+
+    {record.mortality !=="0" && <SkullCrossbones />}
+    {record.Weigth && <WeightScale />}
+    {record.health.toLowerCase() !== "aucun" && <Syringe />}
+    </Space> 
+  },
+  // {
+  //   title: "Traitements",
+  //   dataIndex: "health",
+  //   key: "health",
+  // },
+  // {
+  //   title: "Mortalité",
+  //   dataIndex: "mortality",
+  //   key: "mortality",
+  // },
+  // {
+  //   title: "Poids(g)",
+  //   dataIndex: "Weigth",
+  //   key: "Weigth",
+  // },
+];
