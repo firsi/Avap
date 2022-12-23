@@ -30,8 +30,8 @@ const DailyDataSummary = styled.div`
     }
     }
 
-    .ant-table-row:nth-child(7n + 2) > td{
-        background: #c2e3f35c;
+    .ant-table-row:nth-child(7n + 1) > td{
+        background: #cee2ec38;
     }
 
     & >tr.ant-table-row-selected >td.ant-table-cell {
