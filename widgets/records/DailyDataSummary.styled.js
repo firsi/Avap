@@ -21,12 +21,23 @@ const DailyDataSummary = styled.div`
     font-size: 11px
 }
 
-.ant-table-wrapper .ant-table-tbody >tr >td:last-child {
+.ant-table-wrapper .ant-table-tbody {
+    & >tr >td:last-child {
     padding-left: 0;
     svg {
         width: 14px;
         fill: #164587;
     }
+    }
+
+    .ant-table-row:nth-child(7n + 2) > td{
+        background: #c2e3f35c;
+    }
+
+    & >tr.ant-table-row-selected >td.ant-table-cell {
+    /* background: #bbc2c7; */
+    background: #c2e3f3;
+}
 }
 
 .ant-table-expanded-row.ant-table-expanded-row-level-1 {

@@ -208,7 +208,7 @@ const columns: ColumnsType<DataType> = [
     key: "icons",
     render: (text, record) => <Space size={4}>
 
-    {record.mortality !=="0" && <SkullCrossbones />}
+    {record.mortality !=="0" && <SkullCrossbones style={{fill: "#dc9924"}} />}
     {record.Weigth && <WeightScale />}
     {record.health.toLowerCase() !== "aucun" && <Syringe />}
     </Space> 
