@@ -74,7 +74,7 @@ const getChickPrice = (data, total, pieData) => {
 
 const Expenses = () => {
   const { query: routerQuery } = useRouter();
-  const [data, setData] = useState<Record<string, any>>();
+  const [data, setData] = useState<Record<string, any>[]>();
   const pieData = formatPieData(data);
   const total = pieData.reduce(
     (prev, curr) => prev + (curr.total as number),
