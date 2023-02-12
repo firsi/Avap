@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
-  addDoc,
   collection,
-  doc,
-  setDoc,
   getDocs,
   getFirestore,
   query,
-  updateDoc,
   where,
-  Timestamp,
 } from "firebase/firestore";
 import { useRouter } from "next/router";
 import {
@@ -22,7 +17,7 @@ import {
 } from "recharts";
 import uniqolor from "uniqolor";
 import numbro from "numbro";
-import { Row, Col, Tooltip as AntTooltip } from "antd";
+import { Row, Col } from "antd";
 import Summary from "../../components/summary/Summary";
 
 const EXPENSE_TYPE = [
@@ -120,10 +115,10 @@ const Expenses = () => {
                 <PieChart width={400} height={400}>
                   <Pie
                     data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
+                    // cx="50%"
+                    // cy="50%"
+                    // labelLine={false}
+                    // outerRadius={80}
                     dataKey="total"
                   >
                     {pieData.map((entry, index) => (
