@@ -186,7 +186,7 @@ const AddBatchRow = ({ data }) => {
               <InputNumber style={{width: "100%"}}  />
             </Form.Item>
 
-            <Form.Item label="Total" name="total" initialValue={0} disabled>
+            <Form.Item label="Total" name="total" initialValue={0}>
               <InputNumber style={{width: "100%"}}  disabled />
             </Form.Item>
             <Row gutter={8} justify="end">
