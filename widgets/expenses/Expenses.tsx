@@ -130,7 +130,7 @@ const Expenses = () => {
                   <Tooltip content={CustomTooltip} />
                   <Legend
                     align="left"
-                    formatter={(value, entry) =>
+                    formatter={(value: any, entry: any) =>
                       `${entry?.payload?.label} (${numbro(
                         entry?.payload?.value / total
                       ).format({
