@@ -110,7 +110,7 @@ const Expenses = () => {
         <Row>
           <Col>
             <div style={{ width: 300, height: 300 }}>
-              <ResponsiveContainer width="100%" height="100%">
+             {pieData.length > 0 &&  <ResponsiveContainer width="100%" height="100%">
                 <PieChart width={400} height={400}>
                   <Pie
                     data={pieData}
@@ -140,7 +140,7 @@ const Expenses = () => {
                     }
                   />
                 </PieChart>
-              </ResponsiveContainer>
+              </ResponsiveContainer>}
             </div>
           </Col>
         </Row>
