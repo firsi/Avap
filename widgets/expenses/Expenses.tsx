@@ -87,7 +87,6 @@ const Expenses = () => {
     let data = [];
     getDocs(q).then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
         data.push(doc.data());
       });
       setData(data);
@@ -121,7 +120,7 @@ const Expenses = () => {
                     // outerRadius={80}
                     dataKey="total"
                   >
-                    {pieData.map((entry, index) => (
+                    {pieData?.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={uniqolor(entry.label).color}
