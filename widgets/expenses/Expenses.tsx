@@ -131,8 +131,8 @@ const Expenses = () => {
                   <Legend
                     align="left"
                     formatter={(value, entry) =>
-                      `${entry.payload.label} (${numbro(
-                        entry.payload.value / total
+                      `${entry?.payload?.label} (${numbro(
+                        entry?.payload?.value / total
                       ).format({
                         output: "percent",
                         mantissa: 2,
