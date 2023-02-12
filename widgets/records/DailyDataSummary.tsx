@@ -1,8 +1,6 @@
 import { Col, Row, Table, Space, Typography, Card, FloatButton } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import {
-  PlusOutlined
-} from '@ant-design/icons';
+import { PlusOutlined, FileOutlined, WalletOutlined } from "@ant-design/icons";
 import {
   collection,
   doc,
@@ -17,7 +15,10 @@ import React, { useEffect, useState } from "react";
 import numbro from "numbro";
 import Summary from "../../components/summary/Summary";
 import dayjs from "dayjs";
-import {DailyDataSummary as DailyDataSummaryWrapper, Detail} from "./DailyDataSummary.styled";
+import {
+  DailyDataSummary as DailyDataSummaryWrapper,
+  Detail,
+} from "./DailyDataSummary.styled";
 import SkullCrossbones from "../../icons/skull-crossbones.svg";
 import WeightScale from "../../icons/weight-scale.svg";
 import Syringe from "../../icons/syringe.svg";
@@ -32,24 +33,32 @@ const getTotalMortality = (data: any[], total?: number) => {
     ?.map((item) => parseFloat(item.mortality))
     ?.reduce((prev: number, current: number) => prev + current, 0);
 
-    if(total){
-      const mortalityInPercent = (mortality * 100)/total;
-      return {mortality, mortalityInPercent: numbro(mortalityInPercent).format({average: true, mantissa: 1})};
-    }
+  if (total) {
+    const mortalityInPercent = (mortality * 100) / total;
+    return {
+      mortality,
+      mortalityInPercent: numbro(mortalityInPercent).format({
+        average: true,
+        mantissa: 1,
+      }),
+    };
+  }
 
-    return {mortality, mortalityInPercent}
-    
+  return { mortality, mortalityInPercent };
 };
 
-const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => { 
+const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
   const router = useRouter();
   const [quantity, setQuantity] = useState<number>();
   const [currentAge, setCurrentAge] = useState<number>(data.length - 1);
   const slicedData = data.slice(0, currentAge);
-  const {mortality, mortalityInPercent} = getTotalMortality(slicedData, quantity);
+  const { mortality, mortalityInPercent } = getTotalMortality(
+    slicedData,
+    quantity
+  );
 
   useEffect(() => {
-    if(!router.query?.id) return;
+    if (!router.query?.id) return;
     const db = getFirestore() as any;
     const docRef = doc(db, "record", router.query.id as string);
     getDoc(docRef).then((docSnap) => {
@@ -74,8 +83,6 @@ const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
       ?.map((item) => parseFloat(item.food))
       ?.reduce((prev: number, current: number) => prev + current, 0);
   };
-
-  
 
   const getCurrentMeanWeigth = (data: any[] = []) => {
     if (data?.length === 0) return "";
@@ -129,29 +136,39 @@ const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
       <Row justify="center">
         <Col xs={24} md={14}>
           <Table
-           rowSelection={{
-            type: "radio",
-            onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-              // console.log(selectedRowKeys);
-              handleRowClick(parseInt(selectedRows[0].age, 10))
-            },
-          }}
+            rowSelection={{
+              type: "radio",
+              onChange: (
+                selectedRowKeys: React.Key[],
+                selectedRows: DataType[]
+              ) => {
+                // console.log(selectedRowKeys);
+                handleRowClick(parseInt(selectedRows[0].age, 10));
+              },
+            }}
             onRow={(record, index) => {
               return {
                 // onClick: () => handleRowClick(record, index), // click row
               };
             }}
             expandable={{
-              expandedRowRender: (record) => <>
-                <Detail label="Date" value={dayjs(record.date).format("DD MMM YYYY")} />
-                <Detail label="Traitements" value={record.health} />
-                <Detail label="Mortalite" value={record.mortality} />
-                {record.Weigth && <Detail label="Poids" value={`${record.Weigth}g`} />}
-              </>,
+              expandedRowRender: (record) => (
+                <>
+                  <Detail
+                    label="Date"
+                    value={dayjs(record.date).format("DD MMM YYYY")}
+                  />
+                  <Detail label="Traitements" value={record.health} />
+                  <Detail label="Mortalite" value={record.mortality} />
+                  {record.Weigth && (
+                    <Detail label="Poids" value={`${record.Weigth}g`} />
+                  )}
+                </>
+              ),
               indentSize: 25,
               // rowExpandable: (record) => record.name !== 'Not Expandable',
               expandRowByClick: true,
-              fixed: false
+              fixed: false,
             }}
             dataSource={data}
             columns={columns}
@@ -160,7 +177,13 @@ const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
           />
         </Col>
       </Row>
-      <FloatButton icon={<PlusOutlined />} type="primary" onClick={addNewRecord} />
+      <FloatButton.Group trigger="click" type="primary" icon={<PlusOutlined />}>
+        <FloatButton icon={<FileOutlined />} onClick={addNewRecord} />
+        <FloatButton
+          icon={<WalletOutlined />}
+          onClick={() => router.push(`/add-expense/${router.query?.id}`)}
+        />
+      </FloatButton.Group>
     </DailyDataSummaryWrapper>
   );
 };
@@ -206,12 +229,15 @@ const columns: ColumnsType<DataType> = [
     title: "",
     dataIndex: "water",
     key: "icons",
-    render: (text, record) => <Space size={4}>
-
-    {record.mortality !=="0" && <SkullCrossbones style={{fill: "#dc9924"}} />}
-    {record.Weigth && <WeightScale />}
-    {record.health.toLowerCase() !== "aucun" && <Syringe />}
-    </Space> 
+    render: (text, record) => (
+      <Space size={4}>
+        {record.mortality !== "0" && (
+          <SkullCrossbones style={{ fill: "#dc9924" }} />
+        )}
+        {record.Weigth && <WeightScale />}
+        {record.health.toLowerCase() !== "aucun" && <Syringe />}
+      </Space>
+    ),
   },
   // {
   //   title: "Traitements",
