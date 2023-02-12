@@ -18,7 +18,8 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "recharts": "^2.1.16",
-    "styled-components": "^5.3.5"
+    "styled-components": "^5.3.5",
+    "uniqolor": "^1.1.0"
   },
   "devDependencies": {
     "@svgr/webpack": "^6.5.1",

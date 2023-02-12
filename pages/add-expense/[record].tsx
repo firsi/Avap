@@ -45,14 +45,11 @@ const FOOD_TYPE = [
 
 const CHICK_TYPE = [{ label: "COBB 500", value: "cobb500" }];
 
-const AddBatchRow = ({ data }) => {
+const AddBatchRow = () => {
   const router = useRouter();
   const [form] = Form.useForm();
-  let batchRef = useRef(data?.batch);
-  // const record = JSON.parse(data?.record);
   const [isFoodType, setIsFoodType] = useState<boolean>();
   const [isChickType, setIsChickType] = useState<boolean>();
-  const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
   const onFieldsChange = (changedFields) => {
@@ -116,8 +113,6 @@ const AddBatchRow = ({ data }) => {
     }
   };
 
-  console.log(form.getFieldValue("type"));
-
   return (
     <AddRecordContainer>
       <Row justify="center">
@@ -138,16 +133,16 @@ const AddBatchRow = ({ data }) => {
             >
               <DatePicker />
             </Form.Item>
-            <Form.Item name="type" initialValue={EXPENSE_TYPE[1]}>
+            <Form.Item name="type" initialValue={EXPENSE_TYPE[1].value}>
               <Select  options={EXPENSE_TYPE} />
             </Form.Item>
             {isFoodType && (
-              <Form.Item label="Article" name="item" initialValue={FOOD_TYPE[0]}>
+              <Form.Item label="Article" name="item" initialValue={FOOD_TYPE[0].value}>
                 <Select  options={FOOD_TYPE} />
               </Form.Item>
             )}
             {isChickType && (
-              <Form.Item label="Article" name="item"  initialValue={CHICK_TYPE[0]}>
+              <Form.Item label="Article" name="item"  initialValue={CHICK_TYPE[0].value}>
                 <Select options={CHICK_TYPE} />
               </Form.Item>
             )}

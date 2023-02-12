@@ -6278,6 +6278,7 @@ __metadata:
     recharts: ^2.1.16
     styled-components: ^5.3.5
     typescript: ^4.7.4
+    uniqolor: ^1.1.0
   languageName: unknown
   linkType: soft
 
@@ -6726,6 +6727,13 @@ __metadata:
   version: 2.1.0
   resolution: "unicode-property-aliases-ecmascript@npm:2.1.0"
   checksum: 243524431893649b62cc674d877bd64ef292d6071dd2fd01ab4d5ad26efbc104ffcd064f93f8a06b7e4ec54c172bf03f6417921a0d8c3a9994161fe1f88f815b
+  languageName: node
+  linkType: hard
+
+"uniqolor@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "uniqolor@npm:1.1.0"
+  checksum: 56abd6b335082ff4e57d174e31b1dc0207a392a995a60c42054ba3ccd87366cd240c62b6de5ebbae0e7ae13d474b7f5484eebfe4125be4c1e1c4289217cc5166
   languageName: node
   linkType: hard
 
