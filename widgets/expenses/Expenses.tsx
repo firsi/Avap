@@ -15,10 +15,15 @@ import {
   Cell,
   Legend,
 } from "recharts";
+import moment from "moment";
+import 'moment/locale/fr';
+
+
 import uniqolor from "uniqolor";
 import numbro from "numbro";
-import { Row, Col } from "antd";
+import { Row, Col, Table } from "antd";
 import Summary from "../../components/summary/Summary";
+
 
 const EXPENSE_TYPE = [
   { label: "Poussins", value: "chicks" },
@@ -59,13 +64,16 @@ const CustomTooltip = ({ payload }) => {
 };
 
 const getChickPrice = (data, total, pieData) => {
+  console.debug("data", data);
   const amortization =
     pieData.find((item) => item.label === "Depense d'amortissement")?.total ||
     0;
   const totalWithoutExpenses = total - amortization;
-  const chicks = data?.find((item) => item.type === "chicks").quantity;
+  const chicks = data?.find((item) => item.type === "chicks")?.quantity;
   return numbro(totalWithoutExpenses / chicks).format({ mantissa: 0 });
 };
+
+moment.locale('fr');
 
 const Expenses = () => {
   const { query: routerQuery } = useRouter();
@@ -93,10 +101,12 @@ const Expenses = () => {
     });
   }, [routerQuery.id]);
 
+  console.debug(data);
+
   return (
-    <Row justify="center">
-      <Col xs={24} md={8}>
-        <Row gutter={8}>
+    <Row gutter={8} justify="center">
+      <Col xs={24} md={12}>
+        <Row >
           <Col xs={12}>
             <Summary label="Total" description={`${total}`} />
           </Col>
@@ -107,11 +117,12 @@ const Expenses = () => {
             />
           </Col>
         </Row>
+        
         <Row>
           <Col>
-            <div style={{ width: 300, height: 300 }}>
+            <div style={{ width: 500, height: 300 }}>
              {pieData.length > 0 &&  <ResponsiveContainer width="100%" height="100%">
-                <PieChart width={400} height={400}>
+                <PieChart width={500} height={400}>
                   <Pie
                     data={pieData}
                     // cx="50%"
@@ -144,9 +155,59 @@ const Expenses = () => {
             </div>
           </Col>
         </Row>
+        <Row gutter={8}>
+          <Col>
+          <Table  dataSource={data} columns={COLUMNS} />
+          </Col>
+        </Row>
       </Col>
     </Row>
   );
 };
 
 export default Expenses;
+
+const COLUMNS = [
+  {title: 'Date', 
+  dataIndex: 'date', 
+  key: 'date', 
+  render: (value) => moment(value.seconds * 1000).format('DD MMM YY'),
+  sorter: (a, b) => a.date - b.date,
+  defaultSortOrder: 'ascend',
+  // sortDirections: ['ascend'],
+},
+  {
+    title: 'Article',
+    dataIndex: 'item',
+    key: 'item',
+  },
+  {
+    title: 'Prix',
+    dataIndex: 'price',
+    key: 'price',
+    sorter: (a, b) => a.price - b.price,
+  },
+  {
+    title: 'Quantité',
+    dataIndex: 'quantity',
+    key: 'quantity',
+    sorter: (a, b) => a.quantity - b.quantity,
+  },
+  {
+    title: 'Total',
+    dataIndex: 'total',
+    key: 'total',
+    sorter: (a, b) => a.total - b.total,
+  },
+  {
+    title: 'Categorie',
+    dataIndex: 'type',
+    key: 'type',
+    render: (value) => EXPENSE_TYPE.find((item) => item.value === value)?.label
+  },
+  // {
+  //   title: 'Address',
+  //   dataIndex: 'address',
+  //   key: 'address',
+  // },
+]
