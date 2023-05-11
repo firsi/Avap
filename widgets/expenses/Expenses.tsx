@@ -167,7 +167,7 @@ const Expenses = () => {
 
 export default Expenses;
 
-const COLUMNS = [
+const COLUMNS: any = [
   {title: 'Date', 
   dataIndex: 'date', 
   key: 'date', 
