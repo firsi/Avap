@@ -12,15 +12,28 @@ type LayoutProps = {
 const MENU_ITEMS = [
   {
     key: "record",
-    label: "Registre",
+    label: "Gérer mes bandes",
     children: [
-      { key: "show-record", label: "Consulter les Registres" },
-      { key: "create-record", label: "Creer un nouveau registre" },
+      { key: "show-record", label: "Mes bandes", value: "/" },
+      {
+        key: "create-record",
+        label: "Creer une nouvelle bande",
+        value: "/records/create",
+      },
     ],
   },
   {
     key: "calculator",
     label: "Calculateur d'aliments",
+    value: "/calculator",
+  },
+  {
+    key: "customers",
+    label: "Gérer mes clients",
+    children: [
+      { key: "show-customers", label: "Mes clients", value: "/customers" },
+      { key: "create-customers", label: "Ajouter un client", value: "/customers/add-customer" },
+    ],
   },
 ];
 
@@ -37,22 +50,31 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   const handleMenuClick = ({ key }) => {
-    switch (key) {
-      case "show-record":
-        router.push("/");
-        break;
+    // switch (key) {
+    //   case "show-record":
+    //     router.push("/");
+    //     break;
 
-      case "create-record":
-        router.push("/records/create");
-        break;
+    //   case "create-record":
+    //     router.push("/records/create");
+    //     break;
 
-      case "calculator":
-        router.push("/calculator");
-        break;
+    //   case "calculator":
+    //     router.push("/calculator");
+    //     break;
+    //     case "customers":
+    //       router.push("/customers");
+    //       break;
 
-      default:
-        break;
-    }
+    //   default:
+    //     break;
+    // }
+    const menuItem = MENU_ITEMS.map((item) =>
+      item.children ? item.children : item
+    )
+      .flat()
+      .find((item) => item.key === key);
+    router.push(menuItem.value);
     setOpen(false);
   };
   return (
@@ -64,12 +86,17 @@ const Layout = ({ children }: LayoutProps) => {
           justifyContent: "space-between",
           alignItems: "center",
           padding: "0 15px",
-          background:"#164587"
+          background: "#164587",
         }}
       >
         <Link href="/" passHref>
           <Typography.Link
-            style={{ color: "#fff", marginBottom: 0, fontSize: 24, fontWeight: 700 }}
+            style={{
+              color: "#fff",
+              marginBottom: 0,
+              fontSize: 24,
+              fontWeight: 700,
+            }}
           >
             Avap
           </Typography.Link>

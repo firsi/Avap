@@ -1,6 +1,6 @@
 import { Col, Row, Table, Space, Typography, Card, FloatButton } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { PlusOutlined, FileOutlined, WalletOutlined } from "@ant-design/icons";
+import { PlusOutlined, FileOutlined, WalletOutlined, DollarOutlined } from "@ant-design/icons";
 import {
   collection,
   doc,
@@ -182,6 +182,10 @@ const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
         <FloatButton
           icon={<WalletOutlined />}
           onClick={() => router.push(`/add-expense/${router.query?.id}`)}
+        />
+        <FloatButton
+          icon={<DollarOutlined />}
+          onClick={() => router.push(`/sells/add?recordId=${router.query?.id}`)}
         />
       </FloatButton.Group>
     </DailyDataSummaryWrapper>

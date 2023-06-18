@@ -11,7 +11,7 @@ const Index = () => {
   const items = [
     { label: 'Infos Journalieres', key: 'Dayly-data', children: <DailyDataSummary data={batchList} />},
     { label: 'Analyses', key: 'Analysis', children: <DataInsight data={batchList} /> },
-    { label: 'Depenses', key: 'Expenses', children: <Expenses /> },
+    { label: 'Finances', key: 'Expenses', children: <Expenses /> },
   ];
   return (
     <Tabs items={items}  />

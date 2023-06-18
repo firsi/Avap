@@ -7,6 +7,7 @@ import admin from "../firebase/nodeApp";
 import {DeleteOutlined} from "@ant-design/icons"
 import { doc, deleteDoc, getFirestore } from "firebase/firestore";
 import RecordListContainer from "../widgets/record-list/RecordList.styled";
+import PageHeader from "../components/header/PageHeader";
 
 const Records = ({ data }) => {
   const parsedRecords: Record<string, any>[] = JSON.parse(data).sort(
@@ -41,9 +42,7 @@ const Records = ({ data }) => {
     <RecordListContainer>
       <Row justify="center">
         <Col xs={24} sm={8}>
-          <Divider orientation="left" orientationMargin={0}>
-          <Typography.Title level={5} style={{color: "#164587"}}>Mes Bandes</Typography.Title>
-          </Divider>
+         <PageHeader title="Mes Bandes" />
          
           {records && (
             <List
