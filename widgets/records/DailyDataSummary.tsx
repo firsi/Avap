@@ -185,7 +185,7 @@ const DailyDataSummary = ({ data = [] }: DailyDataSummaryProps) => {
         />
         <FloatButton
           icon={<DollarOutlined />}
-          onClick={() => router.push(`/sells/add?recordId=${router.query?.id}`)}
+          onClick={() => router.push(`/sales/add?recordId=${router.query?.id}`)}
         />
       </FloatButton.Group>
     </DailyDataSummaryWrapper>
