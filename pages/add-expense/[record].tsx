@@ -26,7 +26,6 @@ import {
 } from "firebase/firestore";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
-import admin from "../../firebase/nodeApp";
 import AddRecordContainer from "../../widgets/add-record/addRecord.style";
 
 const EXPENSE_TYPE = [
@@ -35,6 +34,7 @@ const EXPENSE_TYPE = [
   { label: "Provende", value: "food" },
   { label: "Transport", value: "transportation" },
   { label: "Produits Veterinaire", value: "health" },
+  { label: "Autres", value: "other" },
 ];
 
 const FOOD_TYPE = [
