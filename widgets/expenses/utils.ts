@@ -10,7 +10,7 @@ export const formatPieData = (data = [], expenseType: any[]) => {
       byType[record.type] = byType[record.type] + record.total;
     });
     return Object.entries(byType).map(([key, value]) => ({
-      label: expenseType.find((item) => item.value === key).label,
+      label: expenseType.find((item) => item.value === key)?.label,
       total: value,
     }));
   };

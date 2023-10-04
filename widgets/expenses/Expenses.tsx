@@ -22,6 +22,7 @@ const EXPENSE_TYPE = [
   { label: "Provende", value: "food" },
   { label: "Transport", value: "transportation" },
   { label: "Produits Veterinaire", value: "health" },
+  { label: "Autres", value: "other" },
 ];
 
 
