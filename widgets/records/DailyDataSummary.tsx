@@ -239,7 +239,7 @@ const columns: ColumnsType<DataType> = [
           <SkullCrossbones style={{ fill: "#dc9924" }} />
         )}
         {record.Weigth && <WeightScale />}
-        {record.health.toLowerCase() !== "aucun" && <Syringe />}
+        {record?.health?.toLowerCase() !== "aucun" && <Syringe />}
       </Space>
     ),
   },
