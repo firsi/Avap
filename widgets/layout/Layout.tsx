@@ -60,7 +60,7 @@ const Layout = ({ children }: LayoutProps) => {
     setOpen(false);
   };
 
-  const handleMenuClick = ({ key }) => {
+  const handleMenuClick = ({ key }: any) => {
     // switch (key) {
     //   case "show-record":
     //     router.push("/");
@@ -80,7 +80,7 @@ const Layout = ({ children }: LayoutProps) => {
     //   default:
     //     break;
     // }
-    const menuItem = MENU_ITEMS.map((item) =>
+    const menuItem: any = MENU_ITEMS.map((item) =>
       item.children ? item.children : item
     )
       .flat()

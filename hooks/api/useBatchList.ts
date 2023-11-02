@@ -1,4 +1,4 @@
-import { getFirestore, query, collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { getFirestore, query, collection, getDocs, doc, getDoc, DocumentData } from "firebase/firestore";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
@@ -10,7 +10,7 @@ const useBatchList = (recordId?: string) => {
 
         const fetchBatchList = async () => {
             if (!router.isReady) return;
-            const data = [];
+            const data: DocumentData[] = [];
             const db = getFirestore();
             const record = await fetchRecord();
             const q = query(collection(db, `record/${router.query?.id}/batch`));
@@ -27,7 +27,7 @@ const useBatchList = (recordId?: string) => {
                 age: moment(item.date, "YYYY-MM-DD")
                     .startOf("day")
                     .diff(moment.unix(record?.date?.seconds).startOf("day"), "days") + 1,
-            })).sort((a,b) => moment(a.date).valueOf() - moment(b.date).valueOf());
+            })).sort((a: any,b: any) => moment(a.date).valueOf() - moment(b.date).valueOf());
             setBatchList(batchData);
         };
 
