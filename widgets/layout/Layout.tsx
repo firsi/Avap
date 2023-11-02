@@ -1,8 +1,10 @@
 import React, { ReactNode, useState } from "react";
-import { Layout as AntLayout, Button, Drawer, Typography, Menu } from "antd";
+import { Layout as AntLayout, Button, Drawer, Typography, Menu, Grid, Spin } from "antd";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
+import { initializeApp, getApps } from 'firebase/app'
+
 const { Header, Content } = AntLayout;
 
 type LayoutProps = {
@@ -11,10 +13,15 @@ type LayoutProps = {
 
 const MENU_ITEMS = [
   {
+    key: "dashaboard",
+    label: "Tableau de bord",
+    value: "/",
+  },
+  {
     key: "record",
     label: "Gérer mes bandes",
     children: [
-      { key: "show-record", label: "Mes bandes", value: "/" },
+      { key: "show-record", label: "Mes bandes", value: "/records" },
       {
         key: "create-record",
         label: "Creer une nouvelle bande",
@@ -36,10 +43,14 @@ const MENU_ITEMS = [
     ],
   },
 ];
+const { useBreakpoint } = Grid;
 
 const Layout = ({ children }: LayoutProps) => {
   const [open, setOpen] = useState(false);
+  const screens = useBreakpoint()
   const router = useRouter();
+
+  console.debug(screens);
 
   const showDrawer = () => {
     setOpen(true);
@@ -77,8 +88,82 @@ const Layout = ({ children }: LayoutProps) => {
     router.push(menuItem.value);
     setOpen(false);
   };
+
+
   return (
+    <><AntLayout>
+    <AntLayout.Sider
+      breakpoint="lg"
+      collapsedWidth="0"
+      onBreakpoint={broken => {
+        console.log(broken);
+      }}
+      onCollapse={(collapsed, type) => {
+        console.log(collapsed, type);
+      }}
+    >
+       <Link href="/" passHref>
+          <Typography.Link
+            style={{
+              color: "#fff",
+              // marginBottom: 0,
+              display: 'inline-block',
+              fontSize: 24,
+              fontWeight: 700,
+              padding: "16px 24px"
+
+            }}
+          >
+            Avap
+          </Typography.Link>
+        </Link>
+      <Menu
+        theme="dark"
+        mode="inline"
+        defaultSelectedKeys={['1']}
+        items={MENU_ITEMS}
+        onClick={handleMenuClick}
+      />
+    </AntLayout.Sider>
     <AntLayout>
+    <Header
+        className="header"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "0 15px",
+          // background: "#164587",
+          background: "#fff",
+        }}
+      >
+        <Link href="/" passHref>
+          <Typography.Link
+            style={{
+              color: "#164587",
+              marginBottom: 0,
+              fontSize: 24,
+              fontWeight: 700,
+            }}
+          >
+            Avap
+          </Typography.Link>
+        </Link>
+        <Button type="text" onClick={showDrawer} style={{ marginBottom: 0 }}>
+          <Image width={15} height={15} src="/menu-icon.svg" />
+        </Button>
+        {/* <Drawer placement="right" onClose={onClose} open={open}>
+          <Menu onClick={handleMenuClick} mode="inline" items={MENU_ITEMS} />
+        </Drawer> */}
+      </Header>
+      <Content style={{ margin: '24px 16px 0' }}>
+        <Content style={contentStyle}>
+          {getApps().length <= 0 ? <Spin /> : children}
+          </Content>
+      </Content>
+      {/* <AntLayout.Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</AntLayout.Footer> */}
+    </AntLayout>
+    {/* <AntLayout>
       <Header
         className="header"
         style={{
@@ -114,7 +199,9 @@ const Layout = ({ children }: LayoutProps) => {
           padding: 0;
         }
       `}</style>
-    </AntLayout>
+    </AntLayout> */}
+  </AntLayout></>
+    
   );
 };
 

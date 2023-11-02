@@ -5,9 +5,6 @@ import moment from "moment";
 import useExpenses from "../../hooks/api/useExpenses"
 import 'moment/locale/fr';
 
-
-
-
 import { Row, Col, Table } from "antd";
 import Summary from "../../components/summary/Summary";
 import ExpensesSummaryPie from "./ExpensesSummaryPie";

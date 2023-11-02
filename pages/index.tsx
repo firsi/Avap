@@ -1,111 +1,89 @@
-import { Col, List, Row, Typography, Divider, Button, Popconfirm } from "antd";
-import moment from "moment";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import admin from "../firebase/nodeApp";
-import {DeleteOutlined} from "@ant-design/icons"
-import { doc, deleteDoc, getFirestore } from "firebase/firestore";
-import RecordListContainer from "../widgets/record-list/RecordList.styled";
-import PageHeader from "../components/header/PageHeader";
+import React from 'react';
+import dynamic from 'next/dynamic';
+import useAllExpenses from '../hooks/api/useAllExpenses';
+import useAllRecords from '../hooks/api/useAllRecords';
+import useAllSales from '../hooks/api/useAllSales';
+import { employeeCost, getExpenses, groupBy } from '../lib/utils';
+import { Card, Col, Row, Statistic } from 'antd';
+import moment from 'moment';
+import MeanWeightChart from '../widgets/dashboard/MeanWeightChart';
 
-const Records = ({ data }) => {
-  const parsedRecords: Record<string, any>[] = JSON.parse(data).sort(
-    (a, b) => moment(b.date).unix() - moment(a.date).unix()
+
+const RevenueCostChart = dynamic(
+  () => import('../widgets/dashboard/RevenueCostChart'),
+  { ssr: false }
+);
+
+const ProfitLossChart = dynamic(
+  () => import('../widgets/dashboard/ProfitLossChart'),
+  { ssr: false }
+);
+const PriceChart = dynamic(
+  () => import('../widgets/dashboard/PriceChart'),
+  { ssr: false }
+);
+
+
+const Index = () => {
+  const { data: expenses } = useAllExpenses();
+  const { data: records } = useAllRecords();
+  const { data: sales } = useAllSales();
+  const expensesByRecordId = groupBy(expenses, "recordId", "total");
+  const salesByRecordId = groupBy(sales, "broodId", "amountPaid");
+  const data = getExpenses(expensesByRecordId, salesByRecordId, records).sort(
+    (a, b) => a.timestamp - b.timestamp
   );
-    const [records, setRecords] = useState<any[]>(parsedRecords);
-  
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!data && router.isReady) {
-      router.push("/records/create");
-      return null;
-    }
-  }, [router.isReady]);
-
-  const confirm = async (id: any) => {
-    const db = getFirestore();
-    try {
-      await deleteDoc(doc(db, "record", id));
-      setRecords(state => state.filter(item => item.id !== id));
-    }
-    catch(error){
-      console.log(error)
-    }
-  };
-  
-  const cancel = (e: React.MouseEvent<HTMLElement>) => {
-  };
+  const yearlySalesRevenue = data.filter(item => moment(item.timestamp).isSame(moment(), 'year')).reduce((acc, item) => acc + item.revenue, 0)
+  const yearlySalesCost = data.filter(item => moment(item.timestamp).isSame(moment(), 'year')).reduce((acc, item) => acc + item.depenses, 0)
+  const yearlyEmployeeCost = employeeCost();
 
   return (
-    <RecordListContainer>
-      <Row justify="center">
-        <Col xs={24} sm={8}>
-         <PageHeader title="Mes Bandes" />
-         
-          {records && (
-            <List
-              className="demo-loadmore-list"
-              itemLayout="horizontal"
-              dataSource={records}
-              renderItem={(item) => (
-                <List.Item
-                  actions={[
-                    <Link
-                      href={`/add-batch-row/${item?.id}`}
-                      key="list-loadmore-edit"
-                    >
-                      Ajouter des données
-                    </Link>,
-                    <Link href={`/records/${item?.id}`} key="display-records">
-                      Consulter
-                    </Link>,
-                     <Popconfirm
-                     title="Voulez-vous vraiment supprimer cette bande"
-                     onConfirm={() => confirm(item?.id)}
-                     onCancel={cancel}
-                     okText="Oui"
-                     cancelText="Annuler"
-                   >
-                     <Button type="text" danger icon={<DeleteOutlined />} />
-                   </Popconfirm>
-                  ]}
-                >
-                  <List.Item.Meta
-                    title={moment(item?.date).format("DD MMM YYYY")}
-                    description={`quantité: ${item?.quantity}`}
-                  />
-                </List.Item>
-              )}
-            />
-          )}
-        </Col>
-      </Row>
-    </RecordListContainer>
-  );
+    <>
+    <Row gutter={16} style={{marginBottom: 16}}>
+      <Col xs={12} md={8}>
+        <Card>
+          <Statistic
+            title="Chiffre d'affaire annuel"
+            value={yearlySalesRevenue}
+            valueStyle={{ color: '#3f8600' }}
+            suffix="Fcfa"
+          />
+        </Card>
+      </Col>
+      <Col xs={12} md={8}>
+        <Card>
+          <Statistic
+            title="Charges Annuel"
+            value={yearlySalesCost + yearlyEmployeeCost}
+            valueStyle={{ color: '#e25c3b' }}
+            suffix="Fcfa"
+          />
+        </Card>
+      </Col>
+      <Col xs={12} md={8}>
+        <Card>
+          <Statistic
+            title="Masse Salariale Annuel"
+            value={yearlyEmployeeCost}
+            valueStyle={{ color: '#e25c3b' }}
+            suffix="Fcfa"
+          />
+        </Card>
+      </Col>
+    </Row>
+    <Row style={{marginBottom: 16}} gutter={16}>
+    <Col xs={24} md={12}><RevenueCostChart data={data}/></Col>
+    <Col xs={24} md={12}><ProfitLossChart data={data} /></Col>
+    </Row>
+    <Row gutter={16}>
+    <Col xs={24} md={12}><PriceChart data={data}/></Col>
+    {/* <Col xs={24} md={12}><MeanWeightChart data={data}/></Col> */}
+    </Row>
+      
+      
+    </>
+  )
 };
 
-export default Records;
+export default Index;
 
-export const getServerSideProps = async ({ params }) => {
-  const db = admin.firestore();
-  const recordRef = db.collection("record");
-  const snapshot = await recordRef.get();
-  let records = [];
-
-  if (snapshot.empty) {
-    return { props: { data: null } };
-  }
-
-  snapshot.forEach((doc) => {
-    const record = doc.data();
-    records.push({
-      ...record,
-      id: doc.id,
-      date: new Date(record.date.seconds * 1000),
-    });
-  });
-
-  return { props: { data: JSON.stringify(records) } };
-};
